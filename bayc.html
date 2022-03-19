@@ -1,0 +1,181 @@
+<html>
+  <head>
+    <!-- Moralis SDK code -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
+  </head>
+  <style>
+    div#content{
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 85%;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+  }
+
+  div#MAYC{
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 85%;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+  }
+
+  div.nft {
+    width: 24%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #eee;
+  }
+  </style>
+
+
+  <body>
+    <h1>Explore BAYC</h1>
+    <H2>Lookup any address to monitor their Ape collection and airdrop claim!</H2>    
+    
+    
+
+    <input id="nftaddress" type="text">
+    <button onclick='getNFTsForContract()' id="btn-logout">Search</button> 
+
+    <h1>BAYC</h1>
+    <div id="content"></div>
+    <h1>MAYC</h1>
+    <div id="MAYC"></div>
+
+
+    <h1>$APE token Airdrop</h1>
+    
+
+    <h3> Current Balance:</h3>
+    <div id="BALANCE"></div>
+    
+
+    <script>
+        // 0x5f32d99f52db810d32bef3e50d6533cabd9dcd4e
+        // 0x7eb413211a9de1cd2fe8b8bb6055636c43f7d206
+        
+      // connect to Moralis server
+
+      const serverUrl = "https://6qadtixw3khm.usemoralis.com:2053/server";
+      const appId = "douYgTIk145bxMocJzHyOheIZrr9yU7FgwJKJ1by";
+      Moralis.start({ serverUrl, appId });
+
+        async function getNFTsForContract(){
+            let address = document.getElementById('nftaddress').value;
+
+            const options = { chain:"eth", address:address , token_address:'0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d' }
+            const nfts = await Moralis.Web3API.account.getNFTsForContract(options);
+
+            
+            console.log(nfts);
+            
+             
+            
+            nfts.result.forEach(nft => {
+            let url = nft.token_uri;
+           
+    
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                let currentDiv = document.getElementById("content");
+                let content = `
+                <div class="nft">
+                    <p>#${nft.token_id}</p>
+                    <img width=100 height=100 src=`+FixURL(data.image)+`/>
+                </div>
+                `
+                console.log(data.image)
+                
+                currentDiv.innerHTML += content;
+            });
+        })
+
+        const options2 = { chain:"eth", address:address , token_address:'0x60E4d786628Fea6478F785A6d7e704777c86a7c6' }
+            const nftsMAYC = await Moralis.Web3API.account.getNFTsForContract(options2);
+
+            
+            console.log(nftsMAYC);
+            
+             
+            
+            nftsMAYC.result.forEach(nft => {
+            let url = nft.token_uri;
+            
+    
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                let currentDiv = document.getElementById("MAYC");
+                let content = `
+                <div class="nft">
+                    <p>#${nft.token_id}</p>
+                    <img width=100 height=100 src=`+FixURL(data.image)+`/>
+                </div>
+                `
+                console.log(data.image)
+               
+                currentDiv.innerHTML += content;
+            });
+        })
+
+
+
+        const options4 = { chain: 'eth', address:address }
+        const balances = await Moralis.Web3API.account.getTokenBalances(options4)
+        console.log(balances);
+
+        var data = balances;
+        var data_filter = data.filter( element => element.symbol =="APE")
+        console.log(data_filter)
+        var obj = JSON.stringify(data_filter)
+        console.log(obj)
+        let balanceape = parseInt(obj.slice(-26,-21))
+        
+        let currentDiv = document.getElementById("BALANCE")
+        let content = `
+                <div class="nft">
+                    <p>${balanceape} APE</p>
+                </div>
+                `
+        currentDiv.innerHTML += content;
+        
+        
+           
+    
+        //     fetch(url)
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         let currentDiv = document.getElementById("BALANCE");
+        //         let content = `
+        //         <div class="nft">
+        //             <p>#${url}</p>
+            
+        //         </div>
+        //         `
+        //         console.log(url)
+                
+        //         currentDiv.innerHTML += content;
+        //     });
+        // })
+    }
+
+
+
+
+
+
+    function FixURL(url){
+        if(url.startsWith("ipfs")){
+            return "https://ipfs.moralis.io:2053/ipfs/"+url.slice(7);
+        }
+    }
+
+    </script>
+  </body>
+</html>

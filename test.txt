@@ -1,0 +1,9 @@
+0: {token_address: '0xf9d25eb4c75ed744596392cf89074afaa43614a8', name: 'Up1.org', symbol: 'Up1.org', logo: null, thumbnail: null, …}
+1:
+balance: "181430876664855943980472362260"
+decimals: "18"
+logo: null
+name: "ApeCoin DAO"
+symbol: "ApeCoin"
+thumbnail: null
+token_address: "0x134f18a6864efb61ea8636d1bdb0cc3c4c8fd797"
